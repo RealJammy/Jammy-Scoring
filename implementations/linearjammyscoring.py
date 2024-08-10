@@ -1,7 +1,13 @@
-eventlength = 48 # in hours
-increaseratehrs = 0.8 * 48  / 1000
-tickrate = increaseratehrs * 3600 # this is the number of seconds between each increase in the score
-bloodtimes = {
+eventstartstamp = 1722038400 # This is the start time of the event.
+eventendstamp = 1722211200 # This is the end time of the event.
+eventlength = eventendstamp - eventstartstamp
+maximumscoretime = 0.8  # This is the time at which the score is maximum, expressed as a proportion of the event length.
+maxpoints = 1000 # This is the maximum number of points that can be scored from a challenge.
+startingscore = 1 # This is the score at the start of the event.
+tickrate = maximumscoretime * eventlength  / maxpoints # This is the rate at which the score increases.
+
+
+bloodtimes = { # This is a dictionary of challenges and their completion times. This could be standarised to use challenge IDs and UNIX timestamps in the future.
     "sanity-check" : 16,
     "survey": 191,
     "the-conspiracy" : 558,
@@ -34,7 +40,7 @@ bloodtimes = {
     "repayment-pal" : 172800
 }
 
-def score(challenge):
+def score(challenge): # This function implements the scoring algorithm. It's currently linear - may move to being more complex in the future.
     time = bloodtimes[challenge]
     finalscore = 1 + int(time / tickrate)
     if finalscore > 1000:
@@ -43,8 +49,10 @@ def score(challenge):
 
 
 
-# Now, read the lines from team.txt.
-def scoreteam(filename):
+def scoreteam(filename): 
+    '''This function scores a team's challenges based on a file containing the challenges they have completed.
+    Works based off of the challenge name, not the id (but it would be good to transition to IDs in the future for standardising this.)
+    '''
     with open(filename, "r") as f:
         lines = f.readlines()
         count = 0
@@ -55,15 +63,3 @@ def scoreteam(filename):
                 total += score(line.strip())
     print(f"Total for {filename} is {total}")
 
-scoreteam("corctf2024-data/smiley-fac.txt")
-scoreteam("corctf2024-data/P1G SEKAI.txt")
-scoreteam("corctf2024-data/TeamItaly.txt")
-scoreteam("corctf2024-data/Vespiary.txt")
-scoreteam("corctf2024-data/idek.txt")
-scoreteam("corctf2024-data/Shellphish.txt")
-scoreteam("corctf2024-data/bigyoshie.txt")
-scoreteam("corctf2024-data/organizers.txt")
-scoreteam("corctf2024-data/Maple Bacon.txt")
-scoreteam("corctf2024-data/BunkyoWesterns.txt")
-scoreteam("corctf2024-data/CyberHero.txt")
-scoreteam("corctf2024-data/More Smoked Leet Chicken.txt")
